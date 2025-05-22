@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.androidminiproject.compasables.BranchCard
+import com.example.androidminiproject.models.Branch
+import com.example.androidminiproject.models.BranchType
 import com.example.androidminiproject.ui.theme.AndroidMiniProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,10 +23,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidMiniProjectTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+          BranchCard(Branch(
+              id = 0,
+              name = "Test",
+              type = BranchType.VIRTUAL,
+              address = "Kuwait City",
+              phone = "22222222",
+              hours = "8AM-3PM",
+              locationURL = "goo.gl/rgergba",
+              imageUri = null,), modifier = Modifier.padding(innerPadding))
                 }
             }
         }

@@ -8,8 +8,7 @@ data class Branch(
     val phone: String,
     val hours: String,
     val locationURL: String,
-    val imageUri: Int
-
+    val imageUri: Int?
 )
 enum class BranchType{
     PHYSICAL, VIRTUAL
