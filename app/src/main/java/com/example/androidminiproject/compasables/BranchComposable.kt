@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.androidminiproject.R
+import com.example.androidminiproject.data.DummyBranches
 import com.example.androidminiproject.models.Branch
 
 
@@ -191,21 +193,21 @@ fun BranchCard(
                     Spacer(modifier = Modifier.width(6.dp))
                     Text("🌟", fontSize = 20.sp)
                 }
-                Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = branch.name,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = branch.address,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.secondary
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -219,10 +221,12 @@ fun BranchCard(
                 Text(
                     text = branch.hours,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Phone,
@@ -234,7 +238,7 @@ fun BranchCard(
                 Text(
                     text = branch.phone,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -249,13 +253,61 @@ fun BranchList(
 
     ) {
 
-    LazyColumn(modifier) {
-        items(branches) { branch ->
-            BranchCard(
-                branch = branch,
-                isFavorite = branch.id == favoriteBranchId,
-                navController = navController
+    var myBranches by remember { mutableStateOf(branches) }
+    var isSortedAscending by remember { mutableStateOf(true) }
+
+    Column {
+        Button(
+            onClick = {
+                myBranches = if (isSortedAscending) {
+                    branches.sortedBy { it.name }
+                } else {
+                    branches.sortedByDescending { it.name }
+                }
+                isSortedAscending = !isSortedAscending
+            },
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(50),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             )
+        ) {
+            Text(if (isSortedAscending) "Sort A-Z" else "Sort Z-A")
+        }
+
+        Button(
+            onClick = {
+                myBranches = myBranches.filter { branch ->
+                    branch.hours.contains("24", ignoreCase = true)
+                }
+            },
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(50),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        ) {
+            Text("Open 24/7")
+        }
+
+
+        LazyColumn(modifier) {
+            items(myBranches) { branch ->
+                BranchCard(
+                    branch = branch,
+                    isFavorite = branch.id == favoriteBranchId,
+                    navController = navController
+                )
+            }
         }
     }
+
 }
